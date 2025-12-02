@@ -1,0 +1,70 @@
+CREATE DATABASE automaster;
+USE automaster;
+
+CREATE TABLE CLIENTE (
+  id_cliente INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  telefone VARCHAR(20),
+  cpf VARCHAR(14) UNIQUE,
+  endereco VARCHAR(255)
+);
+
+CREATE TABLE VEICULO (
+  id_veiculo INT AUTO_INCREMENT PRIMARY KEY,
+  placa VARCHAR(10) NOT NULL UNIQUE,
+  modelo VARCHAR(100),
+  ano INT,
+  id_cliente INT NOT NULL,
+  FOREIGN KEY (id_cliente)
+    REFERENCES CLIENTE(id_cliente)
+);
+  
+CREATE TABLE MECANICO (
+  id_mecanico INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(150) NOT NULL,
+  especialidade VARCHAR(100)
+);
+
+CREATE TABLE ORDEM_SERVICO (
+  id_os INT AUTO_INCREMENT PRIMARY KEY,
+  data_abertura DATETIME NOT NULL,
+  data_fechamento DATETIME NULL,
+  status VARCHAR(20) NOT NULL,
+  id_veiculo INT NOT NULL,
+  id_mecanico INT NOT NULL,
+  FOREIGN KEY (id_veiculo) REFERENCES VEICULO(id_veiculo),
+  FOREIGN KEY (id_mecanico) REFERENCES MECANICO(id_mecanico)
+);
+
+CREATE TABLE SERVICO (
+  id_servico INT AUTO_INCREMENT PRIMARY KEY,
+  descricao VARCHAR(200) NOT NULL,
+  valor_mao_obra DECIMAL(10,2) NOT NULL
+);
+
+CREATE TABLE PECA (
+  id_peca INT AUTO_INCREMENT PRIMARY KEY,
+  nome VARCHAR(200) NOT NULL,
+  preco DECIMAL(10,2) NOT NULL,
+  quantidade_estoque INT NOT NULL DEFAULT 0
+);
+
+CREATE TABLE ITEM_SERVICO_OS (
+  id_item_servico INT AUTO_INCREMENT PRIMARY KEY,
+  id_os INT NOT NULL,
+  id_servico INT NOT NULL,
+  quantidade INT NOT NULL DEFAULT 1,
+  valor_total DECIMAL(10,2) NOT NULL,
+  FOREIGN KEY (id_os) REFERENCES ORDEM_SERVICO(id_os),
+  FOREIGN KEY (id_servico) REFERENCES SERVICO(id_servico)
+);
+
+CREATE TABLE ITEM_PECA_OS (
+  id_item_peca INT AUTO_INCREMENT PRIMARY KEY,
+  id_os INT NOT NULL,
+  id_peca INT NOT NULL,
+  quantidade INT NOT NULL DEFAULT 1,
+  valor_total DECIMAL(10,2) NOT NULL,
+  FOREIGN KEY (id_os) REFERENCES ORDEM_SERVICO(id_os),
+  FOREIGN KEY (id_peca) REFERENCES PECA(id_peca)
+);
